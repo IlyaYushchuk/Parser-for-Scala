@@ -16,11 +16,6 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
-
-
-
-    void comments_Separation(std::string code);
 
     int operandsFind(QString str);
 
@@ -28,22 +23,19 @@ private slots:
 
     void constantsFind(std::string code);
 
-    void operandsShow();
-    void operatorsShow();
-
-
-
     void operandsSearch(std::string code);
 
     void operatorsSearch(std::string code);
 
     void unicOperatorsSearch(std::string code);
 
-    void commentsCorrection(std::string code);
-
     void on_testBtn_clicked();
 
     void on_downlCodeBtn_clicked();
+
+    void codeProcessing();
+
+    void stringProcessing(std::string code);
 
 private:
     Ui::MainWindow *ui;
