@@ -51,7 +51,7 @@ void MainWindow::operatorsSearch(std::string code)
     //operators
     // add to comments all operators as remind
 
-    std::regex opers(R"((>>>)|(<<=)|(>>=)|(>=)|(>>)|(!=)|(\|=)|(\^=)|(&=)|([^\/<\+\-\*\\\%\=]([\+\-\*\/\%\.\=\<\>])[^\/=><] )|(while) *[\(]|(for) *[\(]|(println) *[\(]|(print) *[\(]|(object +.+ )|(if) *[\(]|(\{)|(\()|(&&)|(\|\|)|(!|\^|\|&|~)|(<<<)|(<<)|([\+\-\*\/\%\=\<\>\&\|\^\~][=*]?))");
+    std::regex opers(R"((>>>)|(<<=)|(>>=)|(>=)|(>>)|(!=)|(\|=)|(\^=)|(&=)|([^\/<\+\-\*\\\%\=]([\+\-\*\/\%\.\=\<\>])[^\/=><] )|(while) *[\(]|(for) *[\(]|(println) *[\(]|(print) *[\(]|(object +.+ )|(if) *[\(]|(\{)|(\()|(&&)|(\|\|)|(!|\^|\|&|~)|(<<<)|(<<)|([\+\-\*\/\%\=\<\>\&\|\^\~][=*]?)|(\.)|(do)|(else))");
 
     while(std::regex_search(codeCopy, match, opers))
     {
@@ -59,7 +59,9 @@ void MainWindow::operatorsSearch(std::string code)
         for(int i = 1;i < 30; i ++)
         {
             if(i == 11)
+            {
                 continue;
+            }
             str +=QString::fromStdString(match[i].str());
         }
         int index = operatorsFind(str);
@@ -76,6 +78,12 @@ void MainWindow::operatorsSearch(std::string code)
         }
         codeCopy = match.suffix();
     }
+
+    operators[operatorsFind("=")].second += operators[operatorsFind(" =  ")].second;
+    operators.remove(operatorsFind(" =  "));
+
+    operators[operatorsFind("while")].second -= operators[operatorsFind("do")].second;
+    operators[operatorsFind("do")].first = "do-while";
 
     std::regex breaket(R"((def.+|List *)(\())");
     codeCopy = code;
@@ -323,6 +331,15 @@ void MainWindow::stringProcessing(std::string code)
             while(std::regex_search(tempStr,match1,varInStrReg))
             {
                 originalCode += match1[1].str() + match1[2].str() + '\n';
+                int j = operatorsFind(QString::fromStdString("$"));
+                if(j == -1)
+                {
+                    std::pair<QString,int> curr {QString::fromStdString("$"),1};
+                    operators.push_back(curr);
+                }else
+                {
+                    operators[j].second += 1;
+                }
                 tempStr = match1.suffix();
             }
         }
