@@ -51,11 +51,17 @@ void MainWindow::operatorsSearch(std::string code)
     //operators
     // add to comments all operators as remind
 
-    std::regex opers(R"((>>>)|(<<=)|(>>=)|(>=)|(>>)|(!=)|(\|=)|(\^=)|(&=)|([^\/<\+\-\*\\\%\=]([\+\-\*\/\%\.\=\<\>])[^\/=><])|(while) *[\(]|(for) *[\(]|(println) *[\(]|(print) *[\(]|(object +(.+) )|(if) *[\(]|(\{)|(\()|(&&)|(\|\|)|(!|\^|\|&|~)|(<<<)|(<<)|([\+\-\*\/\%\=\<\>\&\|\^\~]=))");
+    std::regex opers(R"((>>>)|(<<=)|(>>=)|(>=)|(>>)|(!=)|(\|=)|(\^=)|(&=)|([^\/<\+\-\*\\\%\=]([\+\-\*\/\%\.\=\<\>])[^\/=><] )|(while) *[\(]|(for) *[\(]|(println) *[\(]|(print) *[\(]|(object +.+ )|(if) *[\(]|(\{)|(\()|(&&)|(\|\|)|(!|\^|\|&|~)|(<<<)|(<<)|([\+\-\*\/\%\=\<\>\&\|\^\~][=*]?))");
 
     while(std::regex_search(codeCopy, match, opers))
     {
-        QString str = QString::fromStdString(match[1].str() + match[2].str() + match[3].str() + match[4].str() + match[5].str() + match[6].str() + match[7].str() + match[8].str() + match[9].str() + match[11].str() + match[12].str() + match[14].str() + match[15].str() + match[17].str() + match[19].str() + match[20].str() + match[21].str() + match[22].str() + match[23].str() + match[24].str() + match[25].str() + match[26].str() + match[27].str() + match[28].str());
+        QString str;//= QString::fromStdString(match[1].str() + match[2].str() + match[3].str() + match[4].str() + match[5].str() + match[6].str() + match[7].str() + match[8].str() + match[9].str()+ match[10].str() + match[11].str() + match[12].str() + match[14].str() + match[15].str() + match[17].str() + match[18].str() + match[19].str() + match[20].str() + match[21].str() + match[22].str() + match[23].str() + match[24].str() + match[25].str() + match[26].str() + match[27].str() + match[28].str());
+        for(int i = 1;i < 30; i ++)
+        {
+            if(i == 11)
+                continue;
+            str +=QString::fromStdString(match[i].str());
+        }
         int index = operatorsFind(str);
         if (index >= 0)
         {
@@ -152,6 +158,8 @@ void MainWindow::constantsFind(std::string code)
         }
         codeCopy = match.suffix();
     }
+
+     originalCode = std::regex_replace(originalCode, numberReg, "");
 
 }
 
@@ -250,51 +258,52 @@ void MainWindow::codeProcessing()
         }
 
     }
-    //base metrics
+    {    //base metrics
 
 
-    int unic_operands = 0;
-    int unic_operators = 0;
-    int all_operands = 0;
-    int all_operators = 0;
+        int unic_operands = 0;
+        int unic_operators = 0;
+        int all_operands = 0;
+        int all_operators = 0;
 
-    for (int i = 0; i < operands.length(); i++)
-    {
-        if (operands[i].second != 0)
+        for (int i = 0; i < operands.length(); i++)
         {
-            unic_operands++;
+            if (operands[i].second != 0)
+            {
+                unic_operands++;
+            }
         }
-    }
 
-    for (int i = 0; i < operators.length(); i++)
-    {
-        if (operators[i].second != 0)
+        for (int i = 0; i < operators.length(); i++)
         {
-            unic_operators++;
+            if (operators[i].second != 0)
+            {
+                unic_operators++;
+            }
         }
+
+        for (int i = 0; i < operands.length(); i++)
+        {
+            all_operands += operands[i].second;
+        }
+
+        for (int i = 0; i < operators.length(); i++)
+        {
+            all_operators += operators[i].second;
+        }
+
+        ui->unic_operands->setNum(unic_operands);
+        ui->unic_operators->setNum(unic_operators);
+        ui->all_operands->setNum(all_operands);
+        ui->all_operators->setNum(all_operators);
+
+        //extra metrics
+
+
+        ui->dict->setNum(unic_operands + unic_operators);
+        ui->len->setNum(all_operands + all_operators);
+        ui->vol->setNum(int((all_operands + all_operators) * log2(unic_operands + unic_operators)));
     }
-
-    for (int i = 0; i < operands.length(); i++)
-    {
-        all_operands += operands[i].second;
-    }
-
-    for (int i = 0; i < operators.length(); i++)
-    {
-        all_operators += operators[i].second;
-    }
-
-    ui->unic_operands->setNum(unic_operands);
-    ui->unic_operators->setNum(unic_operators);
-    ui->all_operands->setNum(all_operands);
-    ui->all_operators->setNum(all_operators);
-
-    //extra metrics
-
-
-    ui->dict->setNum(unic_operands + unic_operators);
-    ui->len->setNum(all_operands + all_operators);
-    ui->vol->setNum(int((all_operands + all_operators) * log2(unic_operands + unic_operators)));
 }
 
 void MainWindow::stringProcessing(std::string code)
