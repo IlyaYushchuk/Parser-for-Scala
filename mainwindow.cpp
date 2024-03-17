@@ -51,14 +51,14 @@ void MainWindow::operatorsSearch(std::string code)
     //operators
     // add to comments all operators as remind
 
-    std::regex opers(R"((>>>)|(<<=)|(>>=)|(>=)|(>>)|(!=)|(\|=)|(\^=)|(&=)|([^\/<\+\-\*\\\%\=]([\+\-\*\/\%\.\=\<\>])[^\/=><] )|(while) *[\(]|(for) *[\(]|(println) *[\(]|(print) *[\(]|(object +.+ )|(if) *[\(]|(\{)|(\()|(&&)|(\|\|)|(!|\^|\|&|~)|(<<<)|(<<)|([\+\-\*\/\%\=\<\>\&\|\^\~][=*]?)|(\.)|(do)|(else))");
+    std::regex opers(R"((>>>)|(<<=)|(>>=)|(>=)|(>>)|(!=)|(\|=)|(\^=)|(&=)|([^\/<\+\-\*\\\%\=]([\+\-\*\/\%\.\=\<\>])[^\/=><] )|(while) *[\(]|(for) *[\(]|(println) *[\(]|(print) *[\(]|(object +.+ )|(if) *[\(]|(\{)|(\()|(&&)|(\|\|)|(!|\^|\|&|~)|(<<<)|(<<)|([\+\-\*\/\%\=\<\>\&\|\^\~][=*]?)|(\.)|((do)[ ]*\{))");
 
     while(std::regex_search(codeCopy, match, opers))
     {
         QString str;//= QString::fromStdString(match[1].str() + match[2].str() + match[3].str() + match[4].str() + match[5].str() + match[6].str() + match[7].str() + match[8].str() + match[9].str()+ match[10].str() + match[11].str() + match[12].str() + match[14].str() + match[15].str() + match[17].str() + match[18].str() + match[19].str() + match[20].str() + match[21].str() + match[22].str() + match[23].str() + match[24].str() + match[25].str() + match[26].str() + match[27].str() + match[28].str());
-        for(int i = 1;i < 30; i ++)
+        for(int i = 1;i <= 28; i ++)
         {
-            if(i == 11)
+            if(i == 11 || i == 27)
             {
                 continue;
             }
@@ -79,11 +79,19 @@ void MainWindow::operatorsSearch(std::string code)
         codeCopy = match.suffix();
     }
 
+    if(operatorsFind(" =  ") != -1)
+    {
     operators[operatorsFind("=")].second += operators[operatorsFind(" =  ")].second;
     operators.remove(operatorsFind(" =  "));
-
-    operators[operatorsFind("while")].second -= operators[operatorsFind("do")].second;
+    }
+    if(operatorsFind("do") != -1)
+    {
+        if(operatorsFind("while") != -1)
+        {
+         operators[operatorsFind("while")].second -= operators[operatorsFind("do")].second;
+        }
     operators[operatorsFind("do")].first = "do-while";
+    }
 
     std::regex breaket(R"((def.+|List *)(\())");
     codeCopy = code;
@@ -227,6 +235,7 @@ void MainWindow::on_downlCodeBtn_clicked()
     QFile file(filename);
     file.open(QIODevice::ReadOnly);
     originalCode = file.readAll().toStdString();
+    ui->testLbl->setText(QString::fromStdString(originalCode));
 }
 
 void MainWindow::codeProcessing()
@@ -239,10 +248,12 @@ void MainWindow::codeProcessing()
 
     ui->testLbl->setText(QString::fromStdString(originalCode));
 
+
     operandsSearch(originalCode);
     constantsFind(originalCode);
 
     unicOperatorsSearch(originalCode);
+
     operatorsSearch(originalCode);
 
 
