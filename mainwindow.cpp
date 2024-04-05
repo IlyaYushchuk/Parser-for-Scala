@@ -51,12 +51,12 @@ void MainWindow::operatorsSearch(std::string code)
     //operators
     // add to comments all operators as remind
 
-    std::regex opers(R"((>>>)|(<<=)|(>>=)|(>=)|(>>)|(!=)|(\|=)|(\^=)|(&=)|([^\/<\+\-\*\\\%\=]([\+\-\*\/\%\.\=\<\>])[^\/=><] )|(while) *[\(]|(for) *[\(]|(println) *[\(]|(print) *[\(]|(object +.+ )|(if) *[\(]|(\{)|(\()|(&&)|(\|\|)|(!|\^|\|&|~)|(<<<)|(<<)|([\+\-\*\/\%\=\<\>\&\|\^\~][=*]?)|(\.)|((do)[ ]*\{))");
+    std::regex opers(R"((>>>)|(<<=)|(>>=)|(>=)|(>>)|(!=)|(\|=)|(\^=)|(&=)|([^\/<\+\-\*\\\%\=]([\+\-\*\/\.\=\<\>])[^\/=><] )|(while) *[\(]|(for) *[\(]|(println) *[\(]|(print) *[\(]|(object +.+ )|(if) *[\(]|(\{)|(\()|(&&)|(\|\|)|(!|\^|\|&|~)|(<<<)|(<<)|([\+\-\*\/\%\=\<\>\&\|\^\~][=*]?)|(\.)|((do)[ ]*\{)|(match))");
 
     while(std::regex_search(codeCopy, match, opers))
     {
         QString str;//= QString::fromStdString(match[1].str() + match[2].str() + match[3].str() + match[4].str() + match[5].str() + match[6].str() + match[7].str() + match[8].str() + match[9].str()+ match[10].str() + match[11].str() + match[12].str() + match[14].str() + match[15].str() + match[17].str() + match[18].str() + match[19].str() + match[20].str() + match[21].str() + match[22].str() + match[23].str() + match[24].str() + match[25].str() + match[26].str() + match[27].str() + match[28].str());
-        for(int i = 1;i <= 28; i ++)
+        for(int i = 1;i <= 29; i ++)
         {
             if(i == 11 || i == 27)
             {
@@ -218,6 +218,14 @@ void MainWindow::operandsSearch(std::string code)
 
 void MainWindow::on_testBtn_clicked()
 {
+
+    originalCode = std::string();
+    comments = std::string();
+    unicOperands = QVector<QString>();
+    unicOperators = QVector<QString>();
+    operands = QVector<std::pair<QString, int>>();
+    operators = QVector<std::pair<QString, int>>();
+    originalCode = (ui->testLbl->toPlainText()).toStdString();
     codeProcessing();
 }
 
@@ -246,7 +254,7 @@ void MainWindow::codeProcessing()
 
     stringProcessing(originalCode);
 
-    ui->testLbl->setText(QString::fromStdString(originalCode));
+   // ui->testLbl->setText(QString::fromStdString(originalCode));
 
 
     operandsSearch(originalCode);

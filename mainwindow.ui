@@ -14,19 +14,6 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>1120</x>
-      <y>670</y>
-      <width>151</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Выбрать файл</string>
-    </property>
-   </widget>
    <widget class="QTableWidget" name="tableOperands">
     <property name="geometry">
      <rect>
@@ -122,7 +109,7 @@
    <widget class="QLabel" name="unic_operands">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>200</x>
       <y>630</y>
       <width>81</width>
       <height>31</height>
@@ -135,7 +122,7 @@
    <widget class="QLabel" name="all_operands">
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>130</x>
       <y>650</y>
       <width>141</width>
       <height>31</height>
@@ -148,7 +135,7 @@
    <widget class="QLabel" name="all_operators">
     <property name="geometry">
      <rect>
-      <x>550</x>
+      <x>570</x>
       <y>650</y>
       <width>141</width>
       <height>31</height>
@@ -161,7 +148,7 @@
    <widget class="QLabel" name="unic_operators">
     <property name="geometry">
      <rect>
-      <x>620</x>
+      <x>640</x>
       <y>630</y>
       <width>71</width>
       <height>31</height>
@@ -272,7 +259,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>seek operands</string>
+     <string>start</string>
     </property>
    </widget>
    <widget class="QScrollArea" name="scrollArea">
