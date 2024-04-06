@@ -23,15 +23,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-int MainWindow::operandsFind(QString str)
-{
-    for (int i = 0; i < operands.length(); i++)
-    {
-        if (operands[i].first == str)
-            return i;
-    }
-    return -1;
-}
 int MainWindow::operatorsFind(QString str)
 {
     for (int i = 0; i < operators.length(); i++)
@@ -40,6 +31,37 @@ int MainWindow::operatorsFind(QString str)
             return i;
     }
     return -1;
+}
+
+void IfFinding()
+{
+    std::regex ifs(R"((if|else[ ]+if|else)[^{]*?\{[^{]*?\})");
+
+        int allIfs = 0;
+        int maxDepth = -1;
+        bool flag = true;
+
+        while(flag)
+        {
+            std::smatch match;
+            std::string codeCopy = originalCode;
+
+            flag = false;
+            while(std::regex_search(codeCopy, match, ifs))
+            {
+                parts.push_back(QString::fromStdString(match[0].str()));
+                if (match[1].str() != "else")
+                    allIfs++;
+                codeCopy = match.suffix();
+                flag = true;
+            }
+
+            maxDepth++;
+            originalCode = std::regex_replace(originalCode, ifs, "");
+        }
+
+        qDebug() << allIfs;
+        qDebug() << maxDepth;
 }
 
 
@@ -152,68 +174,7 @@ void MainWindow::unicOperatorsSearch(std::string code)
 }
 
 
-void MainWindow::constantsFind(std::string code)
-{
-    std::string codeCopy = code;
 
-    std::regex numberReg(R"((-?[0-9]*[,.]?[0-9]+))");
-    std::smatch match;
-
-    int i = 0;
-    while(std::regex_search(codeCopy, match, numberReg))
-    {
-        i = operandsFind(QString::fromStdString(match[1].str()));
-        if(i == -1)
-        {
-            std::pair<QString,int> curr {QString::fromStdString(match[1].str()),1};
-            operands.append(curr);
-
-        }else
-        {
-            operands[i].second++;
-        }
-        codeCopy = match.suffix();
-    }
-
-     originalCode = std::regex_replace(originalCode, numberReg, "");
-
-}
-
-
-void MainWindow::operandsSearch(std::string code)
-{
-    std::string codeCopy = code;
-
-    std::regex varlsReg(R"((va[l|r] +([a-zA-Z_][a-zA-Z0-9_]*)))");
-    std::smatch match;
-
-    while(std::regex_search(codeCopy, match, varlsReg))
-    {
-        unicOperands.push_back(QString::fromStdString(match[2].str()));
-        codeCopy = match.suffix();
-    }
-
-    int i = 0;
-    for(int j = 0; j < unicOperands.length();j++)
-    {
-        std::regex varlsReg("[ \({.:$\"](" + unicOperands[j].toStdString() + ")[ \)}.:\"]");
-        codeCopy = code;
-        while(std::regex_search(codeCopy, match, varlsReg))
-        {
-            i = operandsFind(QString::fromStdString(match[1].str()));
-            if(i == -1)
-            {
-                std::pair<QString,int> curr {QString::fromStdString(match[1].str()),1};
-                operands.push_back(curr);
-            }else
-            {
-                operands[i].second += 1;
-            }
-            codeCopy = match.suffix();
-        }
-    }
-
-}
 
 
 void MainWindow::on_testBtn_clicked()
@@ -257,8 +218,6 @@ void MainWindow::codeProcessing()
    // ui->testLbl->setText(QString::fromStdString(originalCode));
 
 
-    operandsSearch(originalCode);
-    constantsFind(originalCode);
 
     unicOperatorsSearch(originalCode);
 
